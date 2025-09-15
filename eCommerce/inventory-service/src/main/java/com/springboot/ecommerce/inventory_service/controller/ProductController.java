@@ -1,5 +1,6 @@
 package com.springboot.ecommerce.inventory_service.controller;
 
+import com.springboot.ecommerce.inventory_service.clients.OrdersFeignClients;
 import com.springboot.ecommerce.inventory_service.dto.OrderRequestDto;
 import com.springboot.ecommerce.inventory_service.dto.ProductDto;
 import com.springboot.ecommerce.inventory_service.service.ProductService;
@@ -22,20 +23,27 @@ public class ProductController {
 
     private final ProductService productService;
 
-    private final DiscoveryClient discoveryClient;
-    private final RestClient restClient;
+    private final OrdersFeignClients ordersFeignClients;
+
+//    private final DiscoveryClient discoveryClient;
+//    private final RestClient restClient;
 
     @GetMapping("/fetchOrders")
     public String fetchFromOrdersService(HttpServletRequest httpServletRequest) {
 
-//        log.info(httpServletRequest.getHeader("x-custom-header"));
+//        log.info(httpServletRequest.getHeader("X-Custom-Header"));
+        log.info(httpServletRequest.getHeader("x-custom-header"));
 
-        ServiceInstance orderService = discoveryClient.getInstances("order-service").getFirst();
+//        ServiceInstance orderService = discoveryClient.getInstances("order-service").getFirst();
 
-        return restClient.get()
-        .uri(orderService.getUri()+"/api/v1/orders/helloOrders")
-        .retrieve()
-        .body(String.class);
+//        return restClient.get()
+//        .uri(orderService.getUri()+"/api/v1/orders/core/helloOrders")
+//        .retrieve()
+//        .body(String.class);
+
+        return ordersFeignClients.helloOrders();
+
+
     }
 
     @GetMapping

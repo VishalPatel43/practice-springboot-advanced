@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: api-gateway
+# API Gateway configuration
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: order-service
+#          uri: lb://ORDER-SERVICE
+#          predicates: # condition, how request will be routed
+#            - Path=/api/v1/orders/** # we can use the , if we have multiple paths
+##            - Method=GET,POST # Allow only GET and POST methods
+##            - Header=X-Request-Source, Internal # Allow only requests with this header
+#        - id: inventory-service
+#          uri: lb://INVENTORY-SERVICE
+#          predicates:
+#            - Path=/api/v1/inventory/**
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: order-service
+              uri: lb://ORDER-SERVICE
+              predicates:
+                - Path=/api/v1/orders/**
+              filters:
+#                - StripPrefix= 2 # not consider two / --> /api/v1
+            - id: inventory-service
+              uri: lb://INVENTORY-SERVICE
+              predicates:
+                - Path=/api/v1/inventory/**
+              filters:
+                - AddRequestHeader=X-Custom-Header, Vishal # key value pair
+#                - RedirectTo=302, https://www.google.com # redirect to google if anyone hits inventory service
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# Expose only health and info
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
