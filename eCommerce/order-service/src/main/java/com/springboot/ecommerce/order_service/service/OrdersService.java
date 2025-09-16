@@ -1,5 +1,6 @@
 package com.springboot.ecommerce.order_service.service;
 
+import com.springboot.ecommerce.order_service.clients.InventoryOpenFeignClient;
 import com.springboot.ecommerce.order_service.dto.OrderRequestDto;
 import com.springboot.ecommerce.order_service.entity.OrderItem;
 import com.springboot.ecommerce.order_service.entity.OrderStatus;
@@ -20,6 +21,8 @@ public class OrdersService {
     private final OrdersRepository orderRepository;
     private final ModelMapper modelMapper;
 
+    private final InventoryOpenFeignClient inventoryOpenFeignClient;
+
     public List<OrderRequestDto> getAllOrders() {
         log.info("Fetching all orders");
         List<Orders> orders = orderRepository.findAll();
@@ -34,8 +37,7 @@ public class OrdersService {
 
     public OrderRequestDto createOrder(OrderRequestDto orderRequestDto) {
         log.info("Calling the createOrder method");
-//        Double totalPrice = inventoryOpenFeignClient.reduceStocks(orderRequestDto);
-        Double totalPrice = 0.0;
+        Double totalPrice = inventoryOpenFeignClient.reduceStocks(orderRequestDto);
 
         Orders orders = modelMapper.map(orderRequestDto, Orders.class);
         for(OrderItem orderItem: orders.getItems()) {
